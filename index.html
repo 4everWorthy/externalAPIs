@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+</head>
+<body>
+    <h1>Weather Dashboard</h1>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="fetchWeather()">Search</button>
+    <div id="results"></div>
+
+    <script>
+        async function fetchWeather() {
+            const city = document.getElementById('city').value;
+            try {
+                const response = await fetch(`/api/weather?city=${city}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                displayError('Error fetching data. Please try again.');
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Weather in ${data.location.name}</h2>
+                <p>Temperature: ${data.current.temp_c} °C</p>
+                <p>Weather: ${data.current.condition.text}</p>
+                <p>Humidity: ${data.current.humidity} %</p>
+                <p>Wind Speed: ${data.current.wind_kph} kph</p>
+            `;
+        }
+
+        function displayError(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<p style="color: red;">${message}</p>`;
+        }
+    </script>
+</body>
+</html>
